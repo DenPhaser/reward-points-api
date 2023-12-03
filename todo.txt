@@ -1,0 +1,20 @@
+API:
+    order:
+        - create / post
+    reward-points:
+        - add / substract
+        - get balance
+    configuration:
+        - change percentage
+        - conversion rates
+
+DB:
+    customer
+    order ???
+    customer-point-history
+    configuration (reward-percentage, currency rates) => move to separate service
+
+CACHE:
+    configured percentage
+    customer point history balance ??
+    exchange rates
