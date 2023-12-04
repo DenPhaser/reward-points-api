@@ -47,9 +47,9 @@ VALUES
 
 DELIMITER //
 CREATE PROCEDURE adjust_points(
-    IN @customer_id INT,
-    IN @amount INT,
-    IN @order_guid CHAR(36)
+    IN customer_id INT,
+    IN amount INT,
+    IN order_guid CHAR(36)
 )
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
@@ -61,9 +61,15 @@ BEGIN
     START TRANSACTION;
 		
 	-- Lock the customer record for update
-    SELECT id FROM Customer WHERE id = @customer_id FOR UPDATE;
+    SELECT id FROM Customer WHERE id = customer_id FOR UPDATE; 
 		
-    UPDATE Customer SET points = points + @amount WHERE id = @customer_id;
+    UPDATE Customer SET points = GREATEST(0, points + amount) WHERE id = customer_id;
+
+    -- Insert a transaction log
+    INSERT INTO CustomerPointHistory
+        (customer_id, order_guid, amount)
+    VALUES 
+        (customer_id, order_guid, amount);
 
     COMMIT;
 END //

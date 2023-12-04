@@ -1,64 +1,77 @@
-import { Body, Controller, Get, HttpCode, Param, Query, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Query,
+  Patch,
+  Post,
+  HttpStatus,
+  HttpException,
+} from '@nestjs/common';
 import { AppService as AppService } from './app.service';
 import { ProcessOrderDto } from './dto/process-order.dto';
-import { AdjustBalanceDto } from './dto/adjust-balance.dto';
+import { AdjustBalanceDto as AddPointsDto } from './dto/adjust-balance.dto';
 import { CustomerDto } from './dto/customer.dto';
 import { validate } from 'class-validator';
+import { CurrencyService } from './currency/currency.service';
 
 @Controller()
 export class AppController {
-	constructor(private readonly service: AppService) {}
+  constructor(
+	private readonly service: AppService,
+	private readonly currencyService: CurrencyService
+  ) {}
 
-	@Post('orders/new')
-	async processOrder(
-		@Body() dto: ProcessOrderDto
-	): Promise<any> {
+  @Post('orders/new')
+  async processOrder(@Body() dto: ProcessOrderDto): Promise<any> {
+    
+	await this.service.processOrder(dto)
 
-		const customer = await this.service.getCustomer(dto.customer)
+    return {
+      message: 'OK',
+    };
+  }
 
-		// TODO: calculate points correctly 
-		// TODO: take into account currency
-		const points = dto.order.paid * .01
+  @Get('points')
+  async getBalance(
+    @Query('email') email: string,
+    @Query('phone') phone: string,
+  ): Promise<any> {
+    const customerDto = new CustomerDto();
+    customerDto.email = email;
+    customerDto.phone = phone;
 
-		await this.service.adjustPoints(
-			customer.id,
-			points,
-			dto.order.id
-		)
+    const validationErrors = await validate(customerDto, {
+      validationError: {
+        target: false,
+        value: false,
+      },
+    });
+    if (validationErrors.length) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Validation failed',
+          messages: validationErrors,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
-		return {
-			message: 'OK'
-		}
-  	}
+    const balance = await this.service.getBalance(customerDto);
 
-	@Get('points')
-  	async getBalance(
-		@Query('email') email: string,
-		@Query('phone') phone: string
-	): Promise<any> {
-		
-		const customerDto = new CustomerDto()
-		customerDto.email = email
-		customerDto.phone = phone
+    return {
+      message: "Customer's point balance",
+      balance: balance,
+    };
+  }
 
-		const balance = await this.service.getBalance(customerDto)
+  @Patch('points')
+  async addPoints(@Body() dto: AddPointsDto): Promise<any> {
+    await this.service.addPoints(dto);
 
-		return {
-			message: "Customer's point balance",
-			balance: balance
-		}
-	}
-
-	@Patch('points')
-  	async adjustBalance(
-		@Body() dto: AdjustBalanceDto
-	): Promise<any> {
-		const customer = await this.service.getCustomer(dto.customer)
-
-		await this.service.adjustPoints(
-			customer.id,
-			dto.amount
-		)
-
-	}
+    return {
+      message: 'OK',
+    };
+  }
 }

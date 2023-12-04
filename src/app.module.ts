@@ -2,14 +2,15 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { Customer } from './customer.entity';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { CurrencyModule } from './currency/currency.module';
+import { CustomerModule } from './customer/customer.module';
+import { PointsModule } from './points/points.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-	TypeOrmModule.forFeature([Customer]),
     TypeOrmModule.forRootAsync({
       useFactory: () => ({
         type: 'mysql',
@@ -21,7 +22,10 @@ import { AppService } from './app.service';
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         synchronize: false
       }),
-    })
+    }),
+    CustomerModule,
+    CurrencyModule,
+    PointsModule
   ],
   controllers: [AppController],
   providers: [AppService],
