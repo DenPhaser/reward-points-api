@@ -2,11 +2,14 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { CustomerModule } from './customer/customer.module';
+import { Customer } from './customer.entity';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+	TypeOrmModule.forFeature([Customer]),
     TypeOrmModule.forRootAsync({
       useFactory: () => ({
         type: 'mysql',
@@ -16,18 +19,11 @@ import { CustomerModule } from './customer/customer.module';
         password: process.env.DB_PASSWORD,
         database: process.env.DB_NAME,
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: false,
-        ssl: true,
-        extra: {
-          trustServerCertificate: true,
-          Encrypt: true,
-          IntegratedSecurity: false,
-        },
+        synchronize: false
       }),
-    }),
-    CustomerModule,
+    })
   ],
-  controllers: [],
-  providers: [],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

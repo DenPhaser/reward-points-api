@@ -10,4 +10,7 @@ export class Customer {
   
     @Column({ length: 20 })
     phone: string;
+
+    @Column()
+    points: number;
 }

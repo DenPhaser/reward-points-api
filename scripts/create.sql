@@ -2,7 +2,8 @@
 CREATE TABLE IF NOT EXISTS Customer (
     id INT AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(255) NOT NULL,
-    phone VARCHAR(20) NOT NULL
+    phone VARCHAR(20) NOT NULL,
+    points INT UNSIGNED NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Creating table `CustomerPointHistory`
@@ -22,6 +23,7 @@ CREATE TABLE IF NOT EXISTS CustomerPointHistory (
 -- Inserting customers
 INSERT INTO Customer (email, phone)
 VALUES 
+    ('exampple@lunaris.jp', '080-555-6969'),
     ('user1@example.com', '123-456-7890'),
     ('user2@example.com', '234-567-8901'),
     ('user3@example.com', '345-678-9012'),
@@ -39,3 +41,30 @@ VALUES
     (2, UUID(), 15),
     (4, UUID(), 15),
     (5, UUID(), 15);
+
+
+-- Stored procedures
+
+DELIMITER //
+CREATE PROCEDURE adjust_points(
+    IN @customer_id INT,
+    IN @amount INT,
+    IN @order_guid CHAR(36)
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Rollback the transaction on error
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+		
+	-- Lock the customer record for update
+    SELECT id FROM Customer WHERE id = @customer_id FOR UPDATE;
+		
+    UPDATE Customer SET points = points + @amount WHERE id = @customer_id;
+
+    COMMIT;
+END //
+DELIMITER ;
