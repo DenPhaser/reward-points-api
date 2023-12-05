@@ -30,7 +30,7 @@ export class AppService {
     dto: AdjustBalanceDto
   ): Promise<void> {
     const customerId = await this.customerService.getId(dto.customer);
-    this.pointsService.add(customerId, dto.amount)
+    await this.pointsService.add(customerId, dto.amount)
   }
 
   async getBalance(customerDto: CustomerDto): Promise<number> {

@@ -1,6 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import {
+  ForbiddenException,
+  Injectable,
+  ConflictException,
+} from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class PointsService {
@@ -14,16 +18,35 @@ export class PointsService {
     amount: number,
     order_guid?: string,
   ): Promise<any> {
-    return this.dataSource.query('CALL adjust_points(?, ?, ?)', [
-      customerId,
-      amount,
-      order_guid,
-    ]);
+    const queryResult = await this.dataSource.query(
+      /*sql*/ `CALL adjust_points(?, ?, ?, @result); SELECT @result AS result;`,
+      [customerId, amount, order_guid],
+    );
+
+    const status = parseInt(queryResult[queryResult.length - 1][0].result);
+
+    switch (status) {
+      // Negative balance
+      case -1:
+        throw new ForbiddenException(
+          'Customer cannot have a negative balance.',
+        );
+        break;
+      // Existing order
+      case 0:
+        throw new ConflictException(
+          `Points for order ${order_guid} were already added.`,
+        );
+        break;
+    }
   }
 
   async get(customerId: number): Promise<number> {
-    const result = await this.dataSource.query('SELECT points FROM `Customer` WHERE id = ?', [ customerId ]);
+    const result = await this.dataSource.query(
+      /*sql*/ `SELECT points FROM Customer WHERE id = ?`,
+      [customerId],
+    );
 
-    return result[0].points
+    return result[0].points;
   }
 }

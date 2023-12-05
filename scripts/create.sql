@@ -49,7 +49,9 @@ DELIMITER //
 CREATE PROCEDURE adjust_points(
     IN customer_id INT,
     IN amount INT,
-    IN order_guid CHAR(36)
+    IN order_guid CHAR(36),
+
+    OUT result INT
 )
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
@@ -59,18 +61,32 @@ BEGIN
     END;
 
     START TRANSACTION;
+
+    SET result = 0;
 		
 	-- Lock the customer record for update
     SELECT id FROM Customer WHERE id = customer_id FOR UPDATE; 
-		
-    UPDATE Customer SET points = GREATEST(0, points + amount) WHERE id = customer_id;
+
+    SET @current_balance = (SELECT points FROM Customer WHERE id = customer_id);
+    
+    -- We don't want to get a negative balance
+    IF @current_balance + amount < 0 THEN
+        SET result = -1;
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Customer does not have enough points.';
+	END IF;
 
     -- Insert a transaction log
     INSERT INTO CustomerPointHistory
         (customer_id, order_guid, amount)
     VALUES 
         (customer_id, order_guid, amount);
+		
+    -- Updates customer total balance
+    UPDATE Customer SET points = GREATEST(0, points + amount) WHERE id = customer_id;
 
     COMMIT;
+
+    SET result = 1;
+
 END //
 DELIMITER ;
