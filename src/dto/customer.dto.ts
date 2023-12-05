@@ -1,14 +1,17 @@
-import { IsEmail, IsPhoneNumber, ValidateIf, IsOptional } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsEmail, IsPhoneNumber, ValidateIf, IsOptional, IsNotEmpty } from 'class-validator';
 
 export class CustomerDto {
+  @ApiProperty({ example: "user1@example.com" })
   @IsEmail()
-  @ValidateIf(o => !o.phone || o.email)
-  @IsOptional()
+  @IsNotEmpty()
+  @ValidateIf(o => o.email || !o.phone)
   email?: string;
 
+  @ApiProperty({ example: null })
   @IsPhoneNumber()
-  @ValidateIf(o => !o.email || o.phone)
-  @IsOptional()
+  @IsNotEmpty()
+  @ValidateIf(o => o.phone || !o.email)
   phone?: string;
 }
  

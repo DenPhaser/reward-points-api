@@ -37,6 +37,8 @@ export class CurrencyService {
   }
 
   private async fetchRates(): Promise<void> {
+    // TODO: store currencies in cache with TTL
+
     const result = await lastValueFrom(
       this.httpService
         .get(`${process.env.CURRENCY_RATES_API}/latest`)

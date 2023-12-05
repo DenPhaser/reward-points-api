@@ -1,5 +1,7 @@
 # WebAPI using NestJS
 
+Primary goal of the API is to award points, based on the value of an order (in JPY), to a customer who can be identified by their email and/or phone number.
+
 ## Installation
 
 Install node_modules.
@@ -12,6 +14,7 @@ Use `create.sql` in `/scripts` to create a database, or simply run `docker-compo
 
 ```bash
 # from scripts folder
+$ cd ./scripts
 $ docker-compose up --force-recreate -V
 
 # from root folder
@@ -27,3 +30,7 @@ $ npm run start
 
 $ npm run start:dev
 ```
+
+## Viewing API endpoints
+
+The API supports OpenAPI, so list endpoints and params they accept can be found at [localhost:3000/api](http://localhost:3000/api).

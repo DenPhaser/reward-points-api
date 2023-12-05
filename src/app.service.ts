@@ -4,7 +4,7 @@ import { CustomerService } from './customer/customer.service';
 import { CurrencyService } from './currency/currency.service';
 import { PointsService } from './points/points.service';
 import { ProcessOrderDto } from './dto/process-order.dto';
-import { AdjustBalanceDto } from './dto/adjust-balance.dto';
+import { AddPointsDto } from './dto/add-points.dto';
 import { ConfigurationService } from './configuration/configuration.service';
 
 @Injectable()
@@ -32,7 +32,7 @@ export class AppService {
   }
 
   async addPoints(
-    dto: AdjustBalanceDto
+    dto: AddPointsDto
   ): Promise<void> {
     const customerId = await this.customerService.getId(dto.customer);
     await this.pointsService.add(customerId, dto.amount)
