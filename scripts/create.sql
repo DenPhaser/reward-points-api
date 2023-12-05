@@ -32,12 +32,12 @@ VALUES
 -- Inserting customers
 INSERT INTO Customer (email, phone)
 VALUES 
-    ('exampple@lunaris.jp', '080-555-6969'),
-    ('user1@example.com', '123-456-7890'),
-    ('user2@example.com', '234-567-8901'),
-    ('user3@example.com', '345-678-9012'),
-    ('user4@example.com', '456-789-0123'),
-    ('user5@example.com', '567-890-1234');
+    ('exampple@lunaris.jp', '8108069696969'),
+    ('user1@example.com', '8108012345671'),
+    ('user2@example.com', '8108012345672'),
+    ('user3@example.com', '8108012345673'),
+    ('user4@example.com', '8108012345674'),
+    ('user5@example.com', '8108012345675');
 
 -- Inserting customer point history records
 INSERT INTO CustomerPointHistory (customer_id, order_guid, amount)
@@ -76,7 +76,7 @@ BEGIN
 	-- Lock the customer record for update
     SELECT id FROM Customer WHERE id = customer_id FOR UPDATE; 
 
-    SET @current_balance = (SELECT points FROM Customer WHERE id = customer_id);
+    SET @current_balance = CAST((SELECT points FROM Customer WHERE id = customer_id) AS SIGNED);
     
     -- We don't want to get a negative balance
     IF @current_balance + amount < 0 THEN
@@ -91,7 +91,7 @@ BEGIN
         (customer_id, order_guid, amount);
 		
     -- Updates customer total balance
-    UPDATE Customer SET points = GREATEST(0, points + amount) WHERE id = customer_id;
+    UPDATE Customer SET points = @current_balance + amount WHERE id = customer_id;
 
     COMMIT;
 

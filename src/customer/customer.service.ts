@@ -39,6 +39,8 @@ export class CustomerService {
   }
 
   getByPhone(phone: string): Promise<Customer> {
+    phone = phone.replaceAll(/\D/gi, '')
+
     return this.customerRepository.findOne({ where: { phone } });
   }
 }
