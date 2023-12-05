@@ -7,6 +7,7 @@ import { AppService } from './app.service';
 import { CurrencyModule } from './currency/currency.module';
 import { CustomerModule } from './customer/customer.module';
 import { PointsModule } from './points/points.module';
+import { ConfigurationModule } from './configuration/configuration.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { PointsModule } from './points/points.module';
         multipleStatements: true
       }),
     }),
+    ConfigurationModule,
     CustomerModule,
     CurrencyModule,
     PointsModule

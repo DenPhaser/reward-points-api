@@ -5,10 +5,12 @@ import { CurrencyService } from './currency/currency.service';
 import { PointsService } from './points/points.service';
 import { ProcessOrderDto } from './dto/process-order.dto';
 import { AdjustBalanceDto } from './dto/adjust-balance.dto';
+import { ConfigurationService } from './configuration/configuration.service';
 
 @Injectable()
 export class AppService {
   constructor(
+    private readonly configurationService: ConfigurationService,
     private readonly customerService: CustomerService,
     private readonly currencyService: CurrencyService,
     private readonly pointsService: PointsService,
@@ -21,7 +23,10 @@ export class AppService {
       dto.order.paid,
       dto.order.currency,
     );
-    const points = paidJPY * 0.01; // TODO: make the percentage configurable
+
+    const percentage = await this.configurationService.getOrderPercentage()
+
+    const points = paidJPY * percentage / 100;
 
     await this.pointsService.add(customerId, points, dto.order.id);
   }

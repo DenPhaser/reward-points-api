@@ -1,8 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import {
   BadRequestException,
-  Injectable,
-  NotFoundException,
+  Injectable
 } from '@nestjs/common';
 import { map, lastValueFrom } from 'rxjs';
 

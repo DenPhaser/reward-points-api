@@ -1,5 +1,5 @@
 -- Creating table `Customer`
-CREATE TABLE IF NOT EXISTS Customer (
+CREATE TABLE Customer (
     id INT AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(255) NOT NULL,
     phone VARCHAR(20) NOT NULL,
@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS Customer (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Creating table `CustomerPointHistory`
-CREATE TABLE IF NOT EXISTS CustomerPointHistory (
+CREATE TABLE CustomerPointHistory (
     id INT AUTO_INCREMENT PRIMARY KEY,
     customer_id INT NOT NULL,
     order_guid CHAR(36) UNIQUE,
@@ -17,8 +17,17 @@ CREATE TABLE IF NOT EXISTS CustomerPointHistory (
     FOREIGN KEY (customer_id) REFERENCES Customer(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Creating table `Configuration`
+CREATE TABLE Configuration (
+    name VARCHAR(255) PRIMARY KEY,
+    value TEXT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Fill with data
+
+INSERT INTO Configuration (name, value)
+VALUES 
+    ('ORDER_REWARD_PERCENTAGE', '1');
 
 -- Inserting customers
 INSERT INTO Customer (email, phone)

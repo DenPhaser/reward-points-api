@@ -13,13 +13,11 @@ import { ProcessOrderDto } from './dto/process-order.dto';
 import { AdjustBalanceDto as AddPointsDto } from './dto/adjust-balance.dto';
 import { CustomerDto } from './dto/customer.dto';
 import { validate } from 'class-validator';
-import { CurrencyService } from './currency/currency.service';
 
 @Controller()
 export class AppController {
   constructor(
-	private readonly service: AppService,
-	private readonly currencyService: CurrencyService
+	private readonly service: AppService
   ) {}
 
   @Post('orders/new')
