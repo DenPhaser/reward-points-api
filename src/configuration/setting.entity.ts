@@ -3,9 +3,9 @@ import { SettingName } from './setting-name.enum';
 
 @Entity('Configuration')
 export class Setting {
-    @PrimaryColumn()
-    name: SettingName;
-  
-    @Column()
-    value: string;
+  @PrimaryColumn()
+  name: SettingName;
+
+  @Column()
+  value: string;
 }

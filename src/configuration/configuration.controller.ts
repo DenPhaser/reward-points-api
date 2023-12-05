@@ -4,26 +4,28 @@ import { ConfigurationService } from './configuration.service';
 
 @Controller('configuration')
 export class ConfigurationController {
+  constructor(private readonly service: ConfigurationService) {}
 
-    constructor(private readonly service: ConfigurationService) {}
+  @Get('order-reward-percentage')
+  async getOrderRewardPercentage(
+    @Body() dto: SetOrderRewardPercentageDto,
+  ): Promise<any> {
+    const value = await this.service.getOrderPercentage();
 
-    @Get('order-reward-percentage')
-    async getOrderRewardPercentage(@Body() dto: SetOrderRewardPercentageDto): Promise<any> {
-      const value = await this.service.getOrderPercentage();
-  
-      return {
-        message: 'Current value',
-        value: value
-      };
-    }
+    return {
+      message: 'Current value',
+      value: value,
+    };
+  }
 
-    @Put('order-reward-percentage')
-    async setOrderRewardPercentage(@Body() dto: SetOrderRewardPercentageDto): Promise<any> {
-      await this.service.setOrderPercentage(dto.value);
-  
-      return {
-        message: 'OK',
-      };
-    }
+  @Put('order-reward-percentage')
+  async setOrderRewardPercentage(
+    @Body() dto: SetOrderRewardPercentageDto,
+  ): Promise<any> {
+    await this.service.setOrderPercentage(dto.value);
 
+    return {
+      message: 'OK',
+    };
+  }
 }

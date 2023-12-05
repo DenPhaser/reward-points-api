@@ -1,3 +1,3 @@
 export enum SettingName {
-    OrderRewardPercentage = "ORDER_REWARD_PERCENTAGE"
+  OrderRewardPercentage = 'ORDER_REWARD_PERCENTAGE',
 }
