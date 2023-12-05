@@ -7,21 +7,23 @@ Install node_modules.
 $ npm install
 ```
 
-Create a `.env` file. Refer to `.env.example`.
-
-## Building
+Create a `.env` file. Refer to `.env.example`. Set up correct database connection.
+Use `create.sql` in `/scripts` to create a database, or simply run `docker-compose up`:
 
 ```bash
-# Build with using webpack
-$ npm run build:webpack
+# from scripts folder
+$ docker-compose up --force-recreate -V
+
+# from root folder
+$ docker-compose -f ./scripts/docker-compose.yml up --force-recreate -V
 ```
 
-## Running
+This will create a mysql database and run an instance of phpMyAdmin on [localhost:8080](http://localhost:8080/).
+
+## Running API
 
 ```bash
 $ npm run start
 
 $ npm run start:dev
-
-$ npm run start:prod
 ```
