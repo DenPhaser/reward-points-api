@@ -55,7 +55,7 @@ VALUES
 -- Stored procedures
 
 DELIMITER //
-CREATE PROCEDURE adjust_points(
+CREATE PROCEDURE sp_addPoints(
     IN customer_id INT,
     IN amount INT,
     IN order_guid CHAR(36),

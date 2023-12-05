@@ -19,7 +19,7 @@ export class PointsService {
     order_guid: string = null
     ): Promise<any> {
     const queryResult = await this.dataSource.query(
-      /*sql*/ `CALL adjust_points(?, ?, ?, @result); SELECT @result AS result;`,
+      /*sql*/ `CALL sp_addPoints(?, ?, ?, @result); SELECT @result AS result;`,
       [customerId, amount, order_guid],
     );
 
