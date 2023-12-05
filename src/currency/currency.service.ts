@@ -11,6 +11,7 @@ export class CurrencyService {
   constructor(private readonly httpService: HttpService) {}
 
   private rates: { [currency: string]: number };
+  private ratesExpireAt: Date;
 
   async convertToJPY(amount: number, currency: string): Promise<number> {
     currency = currency.toUpperCase();
@@ -19,7 +20,11 @@ export class CurrencyService {
       return amount;
     }
 
-    if (!this.rates) {
+    if (
+        !this.rates
+        ||
+        this.ratesExpireAt < new Date()
+    ) {
         await this.fetchRates()
     }
 
@@ -44,6 +49,12 @@ export class CurrencyService {
     }
 
     this.rates = result.rates;
-    this.rates['EUR'] = 1;
+    this.rates['EUR'] = 1; // Default value for that API
+
+    const now = new Date()
+    now.setTime(now.getTime() + +process.env.CURRENCY_RATES_EXPIRATION_MINUTES * 60 * 1000)
+    this.ratesExpireAt = now
+
+    console.log('Currencies fetched! Storring until', this.ratesExpireAt)
   }
 }
