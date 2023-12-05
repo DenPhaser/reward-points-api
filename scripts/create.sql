@@ -32,8 +32,7 @@ VALUES
 -- Inserting customers
 INSERT INTO Customer (email, phone)
 VALUES 
-    ('exampple@lunaris.jp', '8108069696969'),
-    ('user1@example.com', '8108012345671'),
+    ('user1@example.com', '8108012345671')
     ('user2@example.com', '8108012345672'),
     ('user3@example.com', '8108012345673'),
     ('user4@example.com', '8108012345674'),
